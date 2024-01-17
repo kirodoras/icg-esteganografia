@@ -1,25 +1,7 @@
-// compilar: gcc revelar.c -o revelar -lm
+// compilar: gcc revelar.c -o revelar
 // executar: ./revelar output.ppm
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
-#include <string.h>
-
-void binaryToString(const int *binaryArray, char *resultString, int arrayLength)
-{
-  int len = arrayLength / 8;
-
-  for (int i = 0; i < len; i++)
-  {
-    int decimalValue = 0;
-    for (int j = 0; j < 8; j++)
-    {
-      decimalValue = decimalValue * 2 + binaryArray[i * 8 + j];
-    }
-    resultString[i] = (char)decimalValue;
-  }
-  resultString[len] = '\0';
-}
 
 void main(int argc, char **argv)
 {
@@ -71,36 +53,37 @@ void main(int argc, char **argv)
     exit(0);
   }
 
-  int array[1120];
-  unsigned char charBreak = 0;
-  int len = 0;
+  char msg[1120];
+  char aux = 0;
+  int k = 0;
   for (j = 0; j < h; j++)
   {
     for (i = 0; i < l; i++)
     {
-      int lsb = imagem[i][j][0] & 0b00000001;
-      array[len] = lsb;
+      char lsb = imagem[i][j][0] & 1;
+      aux <<= 1;
+      aux |= lsb;
 
-      charBreak = charBreak << 1;
-      if (lsb)
+      if ((k + 1) % 8 == 0)
       {
-        charBreak = charBreak | 0b00000001;
+        if (aux == 0b01011100)
+        {
+          goto exitLoops;
+        }
+        msg[(k + 1) / 8] = aux;
+        aux = 0;
       }
-      if ((charBreak == 0b01011100) && ((len + 1) % 8 == 0))
-      {
-        goto exitLoops;
-      }
-      len++;
+      k++;
     }
   }
 exitLoops:
 
-  printf("charBreak: %d\n", charBreak);
-  printf("u: %d\n", len);
-
-  char resultString[len - 7];
-  binaryToString(array, resultString, len - 7);
-  printf("Mensagem original: %s\n", resultString);
+  printf("Mensagem revelada: ");
+  for (int i = 0; i < (k + 1) / 8; i++)
+  {
+    printf("%c", msg[i]);
+  }
+  printf("\n");
 
   for (i = 0; i < l; i++)
     free(imagem[i]);

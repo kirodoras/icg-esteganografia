@@ -1,35 +1,8 @@
-// compilar: gcc ocultar.c -o ocultar -lm
+// compilar: gcc ocultar.c -o ocultar
 // executar: ./ocultar input.ppm
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
-
-void charToBinary(char c, int *binary)
-{
-  int ascii_value = (int)c;
-
-  for (int i = 7; i >= 0; i--)
-  {
-    binary[i] = ascii_value % 2;
-    ascii_value /= 2;
-  }
-}
-
-void stringToBinary(const char *message, int *binaryArray)
-{
-  int len = strlen(message);
-  int binary[8];
-
-  for (int i = 0; i < len; i++)
-  {
-    charToBinary(message[i], binary);
-    for (int j = 0; j < 8; j++)
-    {
-      binaryArray[i * 8 + j] = binary[j];
-    }
-  }
-}
 
 void main(int argc, char **argv)
 {
@@ -82,39 +55,31 @@ void main(int argc, char **argv)
   }
 
   char *message = "Mensagem super super super super super secreta\\";
-  int binaryArrayLength = 8 * strlen(message);
-  int binaryArray[binaryArrayLength];
+  int messageLength = strlen(message);
 
-  stringToBinary(message, binaryArray);
-
-  printf("binaryArray: ");
-  for (int i = 0; i < binaryArrayLength; i++)
+  int x = 0, y = 0;
+  for (int c = 0; c < messageLength; c++)
   {
-    printf("%d", binaryArray[i]);
-  }
-  printf("\nbinaryArrayLength: %d", binaryArrayLength);
-  printf("\n");
-
-  int len = 0;
-  for (j = 0; j < h; j++)
-  {
-    for (i = 0; i < l; i++)
+    for (int b = 7; b >= 0; b--)
     {
-      if (len >= binaryArrayLength)
-        goto exitLoops;
+      char bit = (message[c] >> b) & 1;
+      imagem[x][y][0] = (imagem[x][y][0] & 0xFE) | bit;
 
-      if (binaryArray[len])
+      if (x == (l - 1))
       {
-        imagem[i][j][0] = imagem[i][j][0] | 0b00000001;
+        x = 0;
+        y += 1;
       }
       else
       {
-        imagem[i][j][0] = imagem[i][j][0] & 0b11111110;
+        x += 1;
       }
-      len++;
     }
   }
-exitLoops:
+
+  printf("Mensagem ocultada!\n");
+  printf("Total de caracteres: %d\n", messageLength);
+  printf("Total de bits: %d\n", messageLength * 8);
 
   fp = fopen("output.ppm", "w");
   fprintf(fp, "P6\n");
