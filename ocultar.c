@@ -57,6 +57,12 @@ void main(int argc, char **argv)
   char *message = "Mensagem super super super super super secreta\\";
   int messageLength = strlen(message);
 
+  if (8 * messageLength > l * h)
+  {
+    printf("Mensagem muito grande para a imagem!");
+    exit(0);
+  }
+
   int x = 0, y = 0;
   for (int c = 0; c < messageLength; c++)
   {
