@@ -63,3 +63,4 @@ gcc revelar.c -o revelar
 ## Observações
 
 - A mensagem de exemplo no programa `ocultar.c` pode ser modificada, mas é importante manter o comprimento máximo do programa `revelar.c`.
+<!-- Passei por aqui, Evilson-->
